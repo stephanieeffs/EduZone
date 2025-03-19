@@ -7,7 +7,7 @@ public class LibrarianUser extends User{
         library.addNewBook(book);
     }
 
-    public void removeBook(Sring title, SchoolLibrary library){
+    public void removeBook(String title, SchoolLibrary library){
         boolean removed = library.removeBook(title);
         if(removed){
             System.out.println("Book removed: " + title);
