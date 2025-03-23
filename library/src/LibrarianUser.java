@@ -1,24 +1,18 @@
-public class LibrarianUser extends User{
-    public LibrarianUser(String name, String id){
-        super(name,id);
+public class LibrarianUser extends User {
+
+    public LibrarianUser(String name, String id, String password) {
+        super(name, id, password);
     }
 
-    public void addNewBook(Book book, SchoolLibrary library){
+    public void addNewBook(Book book, SchoolLibrary library) {
         library.addBook(book);
     }
 
-    /*public void removeBook(String title, SchoolLibrary library){
-        boolean removed = library.removeBook(title);
-        if(removed){
-            System.out.println("Book removed: " + title);
-        }else{
-            System.out.println("Book not found");
-        }
+    public void removeBook(String title, SchoolLibrary library) {
+        library.removeBook(title);
     }
 
-    /*
-     public void updateLibrary(DatabaseController dbController){
-     Implementation will occur after Mysql is linked
-     }
-     */
+    public void removeBook(String title) {
+        new SchoolLibrary().removeBook(title);
+    }
 }

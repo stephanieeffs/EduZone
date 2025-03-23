@@ -1,5 +1,6 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class SchoolLibrary {
@@ -48,5 +49,29 @@ public class SchoolLibrary {
                 e.printStackTrace();
             }
      }
+
+      public void viewAllBooks() {
+        String query = "SELECT id, title, author, status FROM books";
+
+        try (Connection conn = DatabaseController.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            System.out.println("\nAll Books:");
+            System.out.printf("%-10s %-40s %-25s %-10s%n", "ID", "Title", "Author", "Status");
+
+            while (rs.next()) {
+                String id = rs.getString("id");
+                String title = rs.getString("title");
+                String author = rs.getString("author");
+                String status = rs.getString("status");
+                System.out.printf("%-10s %-40s %-25s %-10s%n", id, title, author, status);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(" Failed to fetch books.");
+            e.printStackTrace();
+        }
     }
+}
 
