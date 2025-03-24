@@ -22,13 +22,14 @@ public class MainPage {
         topNav.setBackground(Color.WHITE);
 
         JLabel logo = new JLabel("EduZone");
-        logo.setFont(new Font("SansSerif", Font.BOLD, 20));
+        logo.setFont(new Font("SansSerif", Font.BOLD, 24));
         logo.setForeground(Color.BLACK);
 
         String[] navItems = {"Library", "Gallery", "Feedback", "Contact"};
         for (String item : navItems) {
             JLabel navLabel = new JLabel(item);
             navLabel.setForeground(Color.GRAY);
+            navLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
             topNav.add(navLabel);
         }
 
@@ -43,47 +44,47 @@ public class MainPage {
         headerPanel.setBackground(Color.WHITE);
 
         // Main Content
-        JPanel contentPanel = new JPanel(new GridBagLayout());
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBorder(new EmptyBorder(50, 50, 50, 50));
         contentPanel.setBackground(Color.WHITE);
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 20, 10, 20);
-        gbc.anchor = GridBagConstraints.WEST;
+        JLabel title = new JLabel("Borrow & loan your fav book effortlessly");
+        title.setFont(new Font("SansSerif", Font.BOLD, 40));
+        title.setForeground(Color.BLACK);
 
-        JLabel title = new JLabel("<html><div style='font-size:40px;'>Borrow & loan your <span style='color:#519cfb;'>fav book</span><br>effortlessly</div></html>");
-        JLabel description = new JLabel("<html>Embark on a literary journey like never before with our revolutionary<br>library application! Introducing a seamless experience<br>that transcends traditional boundaries, where you<br>can effortlessly search your favorite books.</html>");
+        JLabel description = new JLabel("<html><div style='text-align:left;'>Embark on a literary journey like never before with our revolutionary<br>library application! Introducing a seamless experience<br>that transcends traditional boundaries, where you<br>can effortlessly search your favorite books.</div></html>");
+        description.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        description.setForeground(Color.DARK_GRAY);
+
         JButton startBtn = new JButton("Start now →");
         startBtn.setBackground(new Color(81, 156, 251));
         startBtn.setForeground(Color.WHITE);
         startBtn.setFocusPainted(false);
+        startBtn.setPreferredSize(new Dimension(150, 40));
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        contentPanel.add(title, gbc);
-
-        gbc.gridy = 1;
-        contentPanel.add(description, gbc);
-
-        gbc.gridy = 2;
-        contentPanel.add(startBtn, gbc);
+        contentPanel.add(title);
+        contentPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        contentPanel.add(description);
+        contentPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+        contentPanel.add(startBtn);
 
         // Books Panel
         JPanel booksPanel = new JPanel();
         booksPanel.setBackground(new Color(81, 156, 251));
         booksPanel.setPreferredSize(new Dimension(500, 700));
-        booksPanel.setLayout(null);
+        booksPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 50));
 
-        // Sample book images
-        String[] bookPaths = {"the tiger who came to tea.jpg", "book2.png", "book3.png", "book4.png"};
-
-        for (int i = 0; i < bookPaths.length; i++) {
-            JLabel book = new JLabel(new ImageIcon(bookPaths[i]));
-            book.setBounds(60 + i * 100, 100 + i * 100, 120, 160);
+        String[] bookPaths = {"book images/tigertea.jpg", "book images/primaryenglish.png", "book images/busyatmath.jpg", "book images/Bears.png"};
+        for (String bookPath : bookPaths) {
+            ImageIcon icon = new ImageIcon(bookPath);
+            Image scaledImage = icon.getImage().getScaledInstance(120, 160, Image.SCALE_SMOOTH);
+            JLabel book = new JLabel(new ImageIcon(scaledImage));
             booksPanel.add(book);
         }
 
         mainPanel.add(headerPanel, BorderLayout.NORTH);
-        mainPanel.add(contentPanel, BorderLayout.CENTER);
+        mainPanel.add(contentPanel, BorderLayout.WEST);
         mainPanel.add(booksPanel, BorderLayout.EAST);
 
         frame.add(mainPanel);
