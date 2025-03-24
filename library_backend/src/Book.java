@@ -2,11 +2,10 @@ public class Book {
     private String title;
     private String author;
     private String status;
-    private int gradeLevel;        // new
-    private String coverImageUrl;  // new
+    private int gradeLevel;        
+    private String coverImageUrl;  
 
-    public Book(String title, String author, String status, 
-                int gradeLevel, String coverImageUrl) {
+    public Book(String title, String author, String status,int gradeLevel, String coverImageUrl) {
         this.title = title;
         this.author = author;
         this.status = status;
@@ -30,20 +29,20 @@ public class Book {
         this.status = status;
     }
 
+    public int getGradeLevel() { 
+        return gradeLevel; 
+    }
+    
+    public String getCoverImageUrl() { 
+        return coverImageUrl; 
+    }
+
     public boolean isAvailable(){
         return "Available".equalsIgnoreCase(this.status);
     }
 
-    public int getGradeLevel() { 
-        return gradeLevel; 
-    }
-
     public void setGradeLevel(int gradeLevel) { 
         this.gradeLevel = gradeLevel; 
-    }
-
-    public String getCoverImageUrl() { 
-        return coverImageUrl; 
     }
 
     public void setCoverImageUrl(String coverImageUrl) { 
