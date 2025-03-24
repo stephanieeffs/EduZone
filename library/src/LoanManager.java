@@ -18,13 +18,13 @@ public class LoanManager {
             ResultSet rs = checkStmt.executeQuery();
     
             if (!rs.next()) {
-                System.out.println("❌ Book not found.");
+                System.out.println("Book not found.");
                 return;
             }
     
             String currentStatus = rs.getString("status");
             if (!currentStatus.equalsIgnoreCase("Available")) {
-                System.out.println("❌ Book is not available for loan.");
+                System.out.println("Book is not available for loan.");
                 return;
             }
     
@@ -80,7 +80,7 @@ public class LoanManager {
             stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
     
-            System.out.println("\n📦 Books currently loaned by you:");
+            System.out.println("\nBooks currently loaned by you:");
             System.out.printf("%-10s %-35s %-25s %-15s%n", "Book ID", "Title", "Author", "Loan Date");
     
             boolean found = false;
@@ -99,7 +99,7 @@ public class LoanManager {
             }
     
         } catch (SQLException e) {
-            System.out.println("❌ Error fetching your current loans.");
+            System.out.println("Error fetching your current loans.");
             e.printStackTrace();
         }
     }
