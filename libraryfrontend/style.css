@@ -1,0 +1,122 @@
+/* Global Styles */
+.root {
+    font-family: 'Segoe UI', sans-serif; /* standard */
+    -fx-font-family: 'Segoe UI', sans-serif;
+
+    /* Add a standard property, then the JavaFX property */
+    background-color: #f5f7fa; /* standard CSS (ignored by JavaFX) */
+    -fx-background-color: linear-gradient(to bottom right, #f5f7fa, #c3cfe2); /* JavaFX-specific */
+}
+
+
+/* Header Styles */
+.header {
+    padding: 20px;                        /* standard */
+    -fx-padding: 20;
+    background-color: #ffffff;             /* standard */
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.07), 5, 0, 0, 2);
+    -fx-alignment: center-left;
+    -fx-spacing: 15;
+}
+
+.logo-text {
+    font-size: 24px;                      /* standard */
+    -fx-font-size: 24;
+    font-weight: bold;                    /* standard */
+    -fx-font-weight: bold;
+    color: #333333;                       /* standard */
+    -fx-text-fill: #333333;
+}
+
+.nav-menu {
+    -fx-spacing: 20;
+}
+
+.nav-label {
+    font-size: 16px;                      /* standard */
+    -fx-font-size: 16;
+    font-weight: normal;                  /* standard */
+    -fx-font-weight: normal;
+    color: #666666;                       /* standard */
+    -fx-text-fill: #666666;
+    cursor: pointer;                      /* standard */
+}
+
+.nav-label:hover {
+    color: #000000;                       /* standard */
+    -fx-text-fill: #000000;
+}
+
+/* Button Styles */
+.button-primary {
+    background-color: #519cfb;            /* standard */
+    -fx-background-color: #519cfb;
+    color: #ffffff;                       /* standard */
+    -fx-text-fill: #ffffff;
+    font-weight: bold;                    /* standard */
+    -fx-font-weight: bold;
+    padding: 8px 16px;                    /* standard */
+    -fx-padding: 8 16;
+    border-radius: 4px;                   /* standard */
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.button-primary:hover {
+    background-color: #3d82db;            /* standard */
+    -fx-background-color: #3d82db;
+}
+
+/* Hero Section */
+.hero-section {
+    padding: 50px;                        /* standard */
+    -fx-padding: 50;
+    -fx-spacing: 50;
+    /* Removed: spacing: 50px; */
+    -fx-alignment: center-left;
+}
+
+.hero-textbox {
+    /* Removed: spacing: 20px; */
+    -fx-spacing: 20;
+    -fx-alignment: top-left;
+    -fx-pref-width: 450;
+}
+
+.hero-title {
+    font-size: 36px;                      /* standard */
+    -fx-font-size: 36;
+    font-weight: bold;                    /* standard */
+    -fx-font-weight: bold;
+    color: #333333;                       /* standard */
+    -fx-text-fill: #333333;
+}
+
+.hero-description {
+    font-size: 16px;                      /* standard */
+    -fx-font-size: 16;
+    color: #555555;                       /* standard */
+    -fx-text-fill: #555555;
+}
+
+/* Book Pane */
+.book-pane {
+    -fx-pref-width: 400;
+    -fx-pref-height: 300;
+    -fx-alignment: center;
+}
+/* For the book pane */
+.book-pane {
+    background-color: transparent;     /* standard */
+    -fx-background-color: transparent; /* JavaFX-specific */
+}
+
+
+/* For the book images */
+.image-view {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0.5, 0, 2);
+    -fx-background-radius: 5px;
+}
+
+/* For the hero section */
