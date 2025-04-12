@@ -89,99 +89,22 @@ router.post("/register", async (req, res) => {
 // Login user
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-
-  console.log(`Login attempt for: ${email}`);
-
   try {
-    // Handle demo password case directly - always accept "password123" for any valid user
-    if (password === "password123") {
-      console.log("Using demo password flow");
-
-      // First check for admin user
-      if (email === "admin@eduzone.com") {
-        console.log("Using demo admin account");
-        const token = jwt.sign(
-          { id: 1, email, role: "admin" },
-          process.env.JWT_SECRET,
-          { expiresIn: "24h" }
-        );
-
-        return res.json({
-          data: {
-            token,
-            user: {
-              id: 1,
-              name: "Admin User",
-              email: email,
-              role: "admin",
-            },
-          },
-        });
-      }
-
-      // Check for staff from mock data
-      const mockData = require("../config/mockData");
-      const mockStaff = mockData.staff.find((s) => s.email === email);
-
-      if (mockStaff) {
-        console.log(`Using mock staff account: ${mockStaff.name}`);
-        const token = jwt.sign(
-          { id: mockStaff.id, email, role: mockStaff.role },
-          process.env.JWT_SECRET,
-          { expiresIn: "24h" }
-        );
-
-        return res.json({
-          data: {
-            token,
-            user: {
-              id: mockStaff.id,
-              name: mockStaff.name,
-              email: mockStaff.email,
-              role: mockStaff.role,
-            },
-          },
-        });
-      }
-    }
-
-    // If we reach here, it's not using the demo password flow, or the email wasn't found
-    // Try regular database authentication
-    console.log("Trying database authentication");
+    // Get user
     const [users] = await pool.query("SELECT * FROM users WHERE email = ?", [
       email,
     ]);
-
-    console.log(`Found ${users.length} users matching email in database`);
-
     if (users.length === 0) {
-      console.log("Invalid credentials - user not found");
       return res
         .status(401)
         .json({ error: { message: "Invalid credentials" } });
     }
 
     const user = users[0];
-    console.log(`User found in database: ${user.name}, role: ${user.role}`);
 
-    // Check password with bcrypt
-    let isValidPassword = false;
-    try {
-      // Double-check for demo password
-      if (password === "password123") {
-        isValidPassword = true;
-        console.log("Using demo password");
-      } else {
-        isValidPassword = await bcrypt.compare(password, user.password);
-      }
-    } catch (passwordError) {
-      console.error("Error comparing passwords:", passwordError);
-      // If bcrypt fails (due to invalid hash format), default to demo password
-      isValidPassword = password === "password123";
-    }
-
+    // Check password
+    const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
-      console.log("Invalid password provided");
       return res
         .status(401)
         .json({ error: { message: "Invalid credentials" } });
@@ -193,8 +116,6 @@ router.post("/login", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
-
-    console.log(`Login successful for ${user.name}`);
 
     res.json({
       data: {

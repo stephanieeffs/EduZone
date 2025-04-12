@@ -1,22 +1,25 @@
 {
-    "name": "eduzone-backend",
-    "version": "1.0.0",
-    "description": "EduZone Backend API",
-    "main": "src/index.js",
-    "scripts": {
-        "start": "node src/index.js",
-        "dev": "nodemon src/index.js",
-        "init-db": "node src/scripts/init-db.js"
-    },
-    "dependencies": {
-        "bcryptjs": "^2.4.3",
-        "cors": "^2.8.5",
-        "dotenv": "^16.0.3",
-        "express": "^4.18.2",
-        "jsonwebtoken": "^9.0.2",
-        "mysql2": "^3.14.0"
-    },
-    "devDependencies": {
-        "nodemon": "^3.1.9"
-    }
+  "name": "eduzone-backend",
+  "version": "1.0.0",
+  "description": "EduZone Backend API",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "init-db": "node src/scripts/init-db.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "eduzone-backend": "file:",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.2",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.14.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
 }
