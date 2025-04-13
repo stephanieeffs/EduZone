@@ -32,7 +32,7 @@ const Home = () => {
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             >
               <ImageWithFallback
-                src="/images/school-logo.png"
+                src="/images/school-logo-alone.jpg"
                 alt="School Logo"
                 className="w-12 h-12 object-contain mb-4"
               />

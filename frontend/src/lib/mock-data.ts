@@ -277,7 +277,7 @@ export const mockForms: Form[] = [
   },
   {
     id: "9",
-    title: "Teacher Observation Form",
+    title: "Classroom Observation Form",
     description: "Form for recording classroom observations",
     category: "academic",
     downloadUrl: "#",
@@ -297,7 +297,7 @@ export const mockForms: Form[] = [
   },
   {
     id: "11",
-    title: "Curriculum Planning Template",
+    title: "Lesson Plan Template",
     description: "Template for planning academic curriculum",
     category: "academic",
     downloadUrl: "#",
@@ -317,7 +317,7 @@ export const mockForms: Form[] = [
   },
   {
     id: "13",
-    title: "Book Acquisition Form",
+    title: "Book Reccomendation Form",
     description: "Form for requesting new book purchases",
     category: "administrative",
     downloadUrl: "#",

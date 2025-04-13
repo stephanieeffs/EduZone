@@ -129,7 +129,7 @@ export const api = {
 };
 
 // Gallery API functions - Commented out until backend API is implemented
-/*
+
 export const getGalleryItems = async () => {
   try {
     const response = await fetch(`${API_BASE_URL}/gallery`);
@@ -173,4 +173,4 @@ export const deleteGalleryItem = async (id: number) => {
     throw error;
   }
 };
-*/
+

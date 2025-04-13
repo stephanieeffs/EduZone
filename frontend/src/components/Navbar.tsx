@@ -57,7 +57,7 @@ const Navbar = () => {
           {/* Logo and Home Link - Branding section */}
           <Link to="/" className="flex items-center gap-3">
             <ImageWithFallback
-              src="/images/school-logo.png"
+              src="/images/frankfield-school-banner.jpg"
               alt="School Logo"
               className="h-10 w-auto"
             />

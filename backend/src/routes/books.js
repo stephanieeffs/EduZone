@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Create book
+
 // Create book
 router.post("/", async (req, res) => {
   const { title, author, isbn, category, quantity } = req.body;

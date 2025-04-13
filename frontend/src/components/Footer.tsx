@@ -11,17 +11,17 @@ const Footer = () => {
           <div className="col-span-1 md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
               <ImageWithFallback
-                src="/images/school-logo.png"
+                src="/images/school-logo-alone.jpg"
                 alt="School Logo"
                 className="h-12 w-auto"
               />
-              <span className="font-bold text-xl">FPS</span>
+              <span className="font-bold text-xl">FPIS</span>
             </div>
             <p className="text-blue-200 mb-4">
               Education is the key to success. Reach for it!
             </p>
             <p className="text-blue-200 text-sm">
-              Frankfield, Clarendon, Jamaica
+              Frankfield Primary and Infant School, South Manchester, Jamaica
             </p>
           </div>
 
@@ -142,7 +142,7 @@ const Footer = () => {
                   />
                 </svg>
                 <span className="text-blue-200">
-                  Frankfield, Clarendon, Jamaica
+                  South Manchester, Jamaica
                 </span>
               </li>
               <li className="flex items-start gap-2">
