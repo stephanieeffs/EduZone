@@ -61,7 +61,7 @@ const mockStaffData: Staff[] = [
     department: "Teaching",
     email: "emily.rodriguez@fps.edu",
     phone: "(555) 123-4569",
-    image: "/images/pexels-pavel-danilyuk-8423887.jpg",
+    image: "/images/gettyimages-1355262749-640x640.jpg",
     bio: "Ms. Rodriguez has been teaching for 5 years. She has a passion for early childhood education and creating engaging learning environments.",
     role: "teacher",
   },
