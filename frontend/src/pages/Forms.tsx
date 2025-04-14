@@ -1,46 +1,28 @@
-/**
- * Forms Component
- *
- * This component manages the school's form system, allowing:
- * - Public users to view and download forms
- * - Admin users to upload, edit, and delete forms
- * - Filtering forms by category and search functionality
- * - Responsive grid layout for form display
- */
-
 import { motion } from "framer-motion";
 import { Download, Filter, Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { Button } from "../components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+  Dialog, DialogContent,
+  DialogDescription,DialogFooter,
+  DialogHeader,DialogTitle,
 } from "../components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+import { DropdownMenu, DropdownMenuCheckboxItem, 
+  DropdownMenuContent, DropdownMenuLabel, 
+  DropdownMenuSeparator, DropdownMenuTrigger 
 } from "../components/ui/dropdown-menu";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { useToast } from "../hooks/use-toast";
-import { Form as SchoolForm, mockForms } from "../lib/mock-data";
 import { useAuth } from "../lib/use-auth";
 
-/** Available form categories */
-type Category = SchoolForm["category"];
+// Available form categories
+type Category = "academic" | "administrative" | "permission" | "health" | "other";
 
-/** Interface for form upload/edit data */
+// Interface for form upload/edit data
 interface FormData {
   title: string;
   description: string;
@@ -48,10 +30,7 @@ interface FormData {
   category: Category;
 }
 
-/**
- * Forms page component that handles displaying and managing school forms.
- * Provides different functionality based on user role (admin vs public).
- */
+// Forms component
 const Forms = () => {
   // Form management state
   const [formData, setFormData] = useState<FormData>({
@@ -66,7 +45,7 @@ const Forms = () => {
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [selectedForm, setSelectedForm] = useState<SchoolForm | null>(null);
+  const [selectedForm, setSelectedForm] = useState<any | null>(null);
 
   // Search and filter state
   const [searchQuery, setSearchQuery] = useState("");
@@ -76,7 +55,7 @@ const Forms = () => {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  /** Available form categories for filtering */
+  // Available form categories for filtering
   const categories: Category[] = [
     "academic",
     "administrative",
@@ -85,11 +64,37 @@ const Forms = () => {
     "other",
   ];
 
-  /**
-   * Filters forms based on search query and selected categories.
-   * All forms are visible to all users (no role-based filtering).
-   */
-  const availableForms = mockForms.filter((form) => {
+  // Fetch forms from the backend (on port 5000)
+  const [forms, setForms] = useState<any[]>([]);
+  useEffect(() => {
+    const fetchForms = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/forms");  // Full API URL with port
+        const data = await res.json();
+        if (data.data) {
+          setForms(data.data);  // Store the form data
+        } else {
+          toast({
+            title: "Error",
+            description: "No forms found in the backend",
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching forms:", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch forms. Please try again.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    fetchForms();
+  }, []);  // Fetch forms on component mount
+
+  // Filters the forms based on search and categories
+  const availableForms = forms.filter((form) => {
     const matchesSearch = form.title
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
@@ -100,24 +105,19 @@ const Forms = () => {
     return matchesSearch && matchesCategory;
   });
 
-  /**
-   * Handles file selection for form upload/edit
-   */
+  // Handle file change for form upload/edit
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFormData((prev) => ({ ...prev, file: e.target.files![0] }));
+      setFormData((prev) => ({ ...prev, file: e.target.files[0] }));
     }
   };
 
-  /**
-   * Handles form submission for new form upload
-   */
+  // Handle form submission for new form upload
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsUploading(true);
 
     try {
-      // Create form data for API
       const formDataToSend = new FormData();
       formDataToSend.append("title", formData.title);
       formDataToSend.append("description", formData.description);
@@ -127,13 +127,17 @@ const Forms = () => {
         formDataToSend.append("file", formData.file);
       }
 
-      // In a real application, this would make an API call
+      const res = await fetch("http://localhost:5000/api/forms", {
+        method: "POST",
+        body: formDataToSend,
+      });
+
+      const data = await res.json();
       toast({
         title: "Success",
         description: "Form uploaded successfully",
       });
 
-      // Reset form and hide upload form
       setFormData({
         title: "",
         description: "",
@@ -153,10 +157,8 @@ const Forms = () => {
     }
   };
 
-  /**
-   * Initiates form editing process
-   */
-  const handleEdit = (form: SchoolForm) => {
+  // Handle form editing
+  const handleEdit = (form: any) => {
     setSelectedForm(form);
     setFormData({
       title: form.title,
@@ -167,23 +169,29 @@ const Forms = () => {
     setShowEditForm(true);
   };
 
-  /**
-   * Initiates form deletion process
-   */
-  const handleDelete = (form: SchoolForm) => {
+  // Handle form deletion
+  const handleDelete = (form: any) => {
     setSelectedForm(form);
     setShowDeleteDialog(true);
   };
 
-  /**
-   * Handles form submission for editing existing form
-   */
+  // Handle form edit submission
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsUploading(true);
 
     try {
-      // In a real application, this would make an API call
+      const res = await fetch(`http://localhost:5000/api/forms/${selectedForm.id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          title: formData.title,
+          description: formData.description,
+          category: formData.category,
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await res.json();
       toast({
         title: "Success",
         description: "Form updated successfully",
@@ -209,12 +217,14 @@ const Forms = () => {
     }
   };
 
-  /**
-   * Handles form deletion confirmation
-   */
+  // Handle form deletion confirmation
   const handleDeleteConfirm = async () => {
     try {
-      // In a real application, this would make an API call
+      const res = await fetch(`http://localhost:5000/api/forms/${selectedForm.id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
       toast({
         title: "Success",
         description: "Form deleted successfully",
@@ -232,31 +242,33 @@ const Forms = () => {
     }
   };
 
-  /**
-   * Handles form download action
-   */
-  const handleDownload = (form: SchoolForm) => {
-    // In a real application, this would trigger a file download
-    toast({
-      title: "Download Started",
-      description: `Downloading ${form.title}...`,
-    });
-  };
+  // Handle form download
+const handleDownload = (form: any) => {
+  const fileUrl = `http://localhost:5000/api/forms/download/${form.id}`; 
+  const a = document.createElement("a");
+  a.href = fileUrl;
+  a.target = "_blank"; 
+  a.download = form.title; 
+  a.click();
+
+  toast({
+    title: "Download Started",
+    description: `Downloading ${form.title}...`,
+  });
+};
+
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
 
-      {/* Main content container */}
       <div className="container mx-auto px-4 py-8 flex-grow">
-        {/* Animated form list container */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="bg-white rounded-lg shadow-md p-6"
         >
-          {/* Header section with title and upload button */}
           <div className="flex justify-between items-center mb-6">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">School Forms</h1>
@@ -264,7 +276,7 @@ const Forms = () => {
                 Access and download available forms
               </p>
             </div>
-            {/* Upload button - only visible to admin users */}
+
             {user?.role === "admin" && (
               <Button
                 className="bg-blue-600 hover:bg-blue-700"
@@ -275,9 +287,7 @@ const Forms = () => {
             )}
           </div>
 
-          {/* Search and filter controls */}
           <div className="flex flex-col md:flex-row gap-4 mb-6">
-            {/* Search input */}
             <div className="flex-1">
               <Input
                 type="search"
@@ -287,7 +297,7 @@ const Forms = () => {
                 className="w-full"
               />
             </div>
-            {/* Category filter dropdown */}
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="w-full md:w-auto">
@@ -304,10 +314,7 @@ const Forms = () => {
                     checked={selectedCategories.includes(category)}
                     onCheckedChange={(checked) => {
                       if (checked) {
-                        setSelectedCategories([
-                          ...selectedCategories,
-                          category,
-                        ]);
+                        setSelectedCategories([...selectedCategories, category]);
                       } else {
                         setSelectedCategories(
                           selectedCategories.filter((c) => c !== category)
@@ -322,7 +329,6 @@ const Forms = () => {
             </DropdownMenu>
           </div>
 
-          {/* Forms grid layout */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {availableForms.map((form) => (
               <motion.div
@@ -331,17 +337,12 @@ const Forms = () => {
                 animate={{ opacity: 1 }}
                 className="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow"
               >
-                {/* Form card header with title and admin actions */}
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <h3 className="font-semibold text-gray-900">
-                      {form.title}
-                    </h3>
-                    <p className="text-sm text-gray-500 mb-2">
-                      {form.description}
-                    </p>
+                    <h3 className="font-semibold text-gray-900">{form.title}</h3>
+                    <p className="text-sm text-gray-500 mb-2">{form.description}</p>
                   </div>
-                  {/* Admin actions - edit and delete buttons */}
+
                   {user?.role === "admin" && form.editable && (
                     <div className="flex gap-2">
                       <Button
@@ -363,12 +364,12 @@ const Forms = () => {
                     </div>
                   )}
                 </div>
-                {/* Form card footer with category badge and download button */}
+
                 <div className="flex items-center justify-between">
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {form.category.charAt(0).toUpperCase() +
-                      form.category.slice(1)}
+                    {form.category.charAt(0).toUpperCase() + form.category.slice(1)}
                   </span>
+
                   <Button
                     variant="outline"
                     size="sm"
@@ -383,12 +384,9 @@ const Forms = () => {
             ))}
           </div>
 
-          {/* Empty state message */}
           {availableForms.length === 0 && (
             <div className="text-center py-8">
-              <p className="text-gray-500">
-                No forms found matching your criteria.
-              </p>
+              <p className="text-gray-500">No forms found matching your criteria.</p>
             </div>
           )}
         </motion.div>
@@ -404,9 +402,7 @@ const Forms = () => {
             className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
           >
             <h2 className="mb-4 text-xl font-semibold">Upload New Form</h2>
-            {/* Form upload fields */}
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Form title input */}
               <div>
                 <Label htmlFor="title">Title</Label>
                 <Input
@@ -418,7 +414,7 @@ const Forms = () => {
                   required
                 />
               </div>
-              {/* Form description input */}
+
               <div>
                 <Label htmlFor="description">Description</Label>
                 <Textarea
@@ -433,7 +429,7 @@ const Forms = () => {
                   required
                 />
               </div>
-              {/* Form category selection */}
+
               <div>
                 <Label htmlFor="category">Category</Label>
                 <select
@@ -455,7 +451,7 @@ const Forms = () => {
                   ))}
                 </select>
               </div>
-              {/* File upload input */}
+
               <div>
                 <Label htmlFor="file">File</Label>
                 <Input
@@ -466,7 +462,7 @@ const Forms = () => {
                   required
                 />
               </div>
-              {/* Form actions */}
+
               <div className="flex justify-end gap-2">
                 <Button
                   type="button"
@@ -494,7 +490,6 @@ const Forms = () => {
             className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
           >
             <h2 className="mb-4 text-xl font-semibold">Edit Form</h2>
-            {/* Form edit fields - similar structure to upload form */}
             <form onSubmit={handleEditSubmit} className="space-y-4">
               <div>
                 <Label htmlFor="edit-title">Title</Label>
@@ -507,6 +502,7 @@ const Forms = () => {
                   required
                 />
               </div>
+
               <div>
                 <Label htmlFor="edit-description">Description</Label>
                 <Textarea
@@ -521,6 +517,7 @@ const Forms = () => {
                   required
                 />
               </div>
+
               <div>
                 <Label htmlFor="edit-category">Category</Label>
                 <select
@@ -542,6 +539,7 @@ const Forms = () => {
                   ))}
                 </select>
               </div>
+
               <div>
                 <Label htmlFor="edit-file">Replace File (Optional)</Label>
                 <Input
@@ -551,6 +549,7 @@ const Forms = () => {
                   accept=".pdf,.doc,.docx"
                 />
               </div>
+
               <div className="flex justify-end gap-2">
                 <Button
                   type="button"
@@ -571,7 +570,6 @@ const Forms = () => {
         </div>
       )}
 
-      {/* Delete Confirmation Dialog */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>
           <DialogHeader>

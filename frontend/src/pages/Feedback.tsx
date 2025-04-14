@@ -6,9 +6,19 @@ import { Label } from "../components/ui/label";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
 import { Textarea } from "../components/ui/textarea";
 import { useToast } from "../hooks/use-toast";
-import { dbService, Feedback as FeedbackType } from "../lib/db";
-import { mockFeedback } from "../lib/mock-data";
 import { useAuth } from "../lib/use-auth";
+
+// Define the feedback item type based on your backend columns.
+// Adjust property names if you want to remap, e.g. created_at -> date.
+export interface FeedbackType {
+  id: number;
+  type: string;
+  text: string;
+  user_id?: number;
+  user_name?: string;
+  status: "Pending" | "Reviewed";
+  created_at: string;
+}
 
 const Feedback = () => {
   const [feedbackType, setFeedbackType] = useState("general");
@@ -19,47 +29,46 @@ const Feedback = () => {
   const { toast } = useToast();
   const { user } = useAuth();
 
+  // When the component mounts or user changes, check user role and fetch feedback
   useEffect(() => {
-    // Check if user is admin
     if (user) {
       setIsAdmin(user.role === "admin");
     }
-
-    // Fetch feedback data
     fetchFeedback();
   }, [user]);
 
+  // Fetch feedback data from the API endpoint
   const fetchFeedback = async () => {
     setIsLoading(true);
     try {
-      // Try to fetch from API first
-      const response = await dbService.feedback.getAll();
+      const res = await fetch("http://localhost:5000/api/feedback");
+      const data = await res.json();
 
-      // Check if we have valid data in the response
-      if (
-        response.data &&
-        response.data.data &&
-        Array.isArray(response.data.data) &&
-        response.data.data.length > 0
-      ) {
-        console.log("Using API data:", response.data.data);
-        setFeedbackList(response.data.data);
+      if (data.data && Array.isArray(data.data)) {
+        console.log("Using API feedback data:", data.data);
+        setFeedbackList(data.data);
       } else {
-        // If API fails, returns empty array, or returns invalid data, use mock data
-        console.log("Using mock data due to empty or invalid API response");
-        setFeedbackList(mockFeedback);
+        toast({
+          title: "Error",
+          description: "No feedback found",
+          variant: "destructive",
+        });
       }
     } catch (error) {
-      console.log("Using mock data due to API error:", error);
-      setFeedbackList(mockFeedback);
+      console.error("Error fetching feedback:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch feedback. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Handle feedback form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!feedbackText.trim()) {
       toast({
         title: "Empty Feedback",
@@ -68,120 +77,114 @@ const Feedback = () => {
       });
       return;
     }
-
     try {
-      const newFeedback = {
+      const newFeedbackPayload = {
         type: feedbackType,
         text: feedbackText,
-        userId: user?.id ? Number(user.id) : undefined,
+        userId: user?.id ? Number(user.id) : null,
         userName: user?.name,
       };
 
-      // Try to submit to API first
-      await dbService.feedback.create(newFeedback);
-
-      // Create mock feedback regardless of API response
-      const mockResponse: FeedbackType = {
-        id: feedbackList.length + 1,
-        type: feedbackType,
-        text: feedbackText,
-        date: new Date().toISOString(),
-        status: "Pending",
-        userId: user?.id ? Number(user.id) : undefined,
-        userName: user?.name,
-      };
-      setFeedbackList([mockResponse, ...feedbackList]);
-
-      toast({
-        title: "Feedback Submitted",
-        description: "Thank you for your feedback!",
+      const res = await fetch("http://localhost:5000/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newFeedbackPayload),
       });
+      const data = await res.json();
 
-      // Clear form
+      if (data.data) {
+        // Assuming the API returns the created feedback object.
+        setFeedbackList([data.data, ...feedbackList]);
+        toast({
+          title: "Feedback Submitted",
+          description: "Thank you for your feedback!",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "No feedback data returned",
+          variant: "destructive",
+        });
+      }
+
+      // Clear form fields
       setFeedbackText("");
       setFeedbackType("general");
     } catch (error) {
-      // If API fails, create mock feedback
-      const mockResponse: FeedbackType = {
-        id: feedbackList.length + 1,
-        type: feedbackType,
-        text: feedbackText,
-        date: new Date().toISOString(),
-        status: "Pending",
-        userId: user?.id ? Number(user.id) : undefined,
-        userName: user?.name,
-      };
-      setFeedbackList([mockResponse, ...feedbackList]);
-
+      console.error("Error submitting feedback:", error);
       toast({
-        title: "Feedback Submitted (Mock)",
-        description: "Thank you for your feedback! (Saved locally)",
+        title: "Error",
+        description: "Failed to submit feedback. Please try again.",
+        variant: "destructive",
       });
-
-      // Clear form
-      setFeedbackText("");
-      setFeedbackType("general");
     }
   };
 
+  // Handle marking feedback as reviewed (admin only)
   const handleMarkAsReviewed = async (id: number) => {
     try {
-      // Try to update via API first
-      await dbService.feedback.updateStatus(id, "Reviewed");
-
-      // Update local state regardless of API response
-      setFeedbackList((prevList) =>
-        prevList.map((item) =>
-          item.id === id ? { ...item, status: "Reviewed" } : item
-        )
-      );
-
-      toast({
-        title: "Feedback Updated",
-        description: "Feedback has been marked as reviewed.",
+      const res = await fetch(`http://localhost:5000/api/feedback/${id}/status`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "Reviewed" }),
       });
+      const data = await res.json();
+      if (data.data) {
+        setFeedbackList((prevList) =>
+          prevList.map((item) =>
+            item.id === id ? { ...item, status: "Reviewed" } : item
+          )
+        );
+        toast({
+          title: "Feedback Updated",
+          description: "Feedback has been marked as reviewed.",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to update feedback status",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
-      // If API fails, update mock data
-      setFeedbackList((prevList) =>
-        prevList.map((item) =>
-          item.id === id ? { ...item, status: "Reviewed" } : item
-        )
-      );
-
+      console.error("Error updating feedback:", error);
       toast({
-        title: "Feedback Updated (Mock)",
-        description: "Feedback has been marked as reviewed (saved locally).",
+        title: "Error",
+        description: "Failed to update feedback. Please try again.",
+        variant: "destructive",
       });
     }
   };
 
+  // Handle feedback deletion (admin only)
   const handleDeleteFeedback = async (id: number) => {
     try {
-      // Try to delete via API first
-      await dbService.feedback.delete(id);
-
-      // Update local state regardless of API response
-      setFeedbackList((prevList) => prevList.filter((item) => item.id !== id));
-
-      toast({
-        title: "Feedback Deleted",
-        description: "Feedback has been successfully deleted.",
+      const res = await fetch(`http://localhost:5000/api/feedback/${id}`, {
+        method: "DELETE",
       });
+      const data = await res.json();
+      if (data.data && data.data.success) {
+        setFeedbackList((prevList) => prevList.filter((item) => item.id !== id));
+        toast({
+          title: "Feedback Deleted",
+          description: "Feedback has been successfully deleted.",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to delete feedback",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
-      // If API fails, delete from mock data
-      setFeedbackList((prevList) => prevList.filter((item) => item.id !== id));
-
+      console.error("Error deleting feedback:", error);
       toast({
-        title: "Feedback Deleted (Mock)",
-        description: "Feedback has been successfully deleted (saved locally).",
+        title: "Error",
+        description: "Failed to delete feedback. Please try again.",
+        variant: "destructive",
       });
     }
   };
-
-  // For debugging
-  useEffect(() => {
-    console.log("Current feedback list:", feedbackList);
-  }, [feedbackList]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -283,7 +286,7 @@ const Feedback = () => {
                         </span>
                       </div>
                       <span className="text-sm text-gray-500">
-                        {new Date(feedback.date).toLocaleDateString()}
+                        {new Date(feedback.created_at).toLocaleDateString()}
                       </span>
                     </div>
 

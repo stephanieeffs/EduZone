@@ -97,91 +97,7 @@ const Library = () => {
     "Grade 6",
   ];
 
-  // Define mock data at component level
-  const mockBooks: Book[] = [
-    {
-      id: 1,
-      title: "New Integrated Approach Language Arts - Grade 1",
-      author: "Carlong Publishers",
-      category: "Language Arts",
-      isbn:"",
-      grade: "Grade 1",
-      available: 1,
-      quantity: 1,
-    },
-    {
-      id: 2,
-      title: "New Integrated Approach Language Arts - Grade 2",
-      author: "Carlong Publishers",
-      category: "Language Arts",
-      isbn:"",
-      grade: "Grade 2",
-      available: 1,
-      quantity: 1,
-    },
-    {
-      id: 3,
-      title: "Caribbean Primary Mathematics - Book 1",
-      author: "Oxford",
-      category: "Mathematics",
-      isbn:"",
-      grade: "Grade 1",
-      available: 1,
-      quantity: 1,
-    },
-    {
-      id: 4,
-      title: "Caribbean Primary Mathematics - Book 2",
-      author: "Oxford",
-      category: "Mathematics",
-      isbn:"",
-      grade: "Grade 2",
-      available: 0,
-      quantity: 1,
-    },
-    {
-      id: 5,
-      title: "Caribbean Primary Science - Book 1",
-      author: "Heinemann",
-      category: "Science",
-      isbn:"",
-      grade: "Grade 1",
-      available: 1,
-      quantity: 1,
-    },
-    {
-      id: 6,
-      title: "Caribbean Primary Science - Book 2",
-      author: "Heinemann",
-      category: "Science",
-      isbn:"",
-      grade: "Grade 2",
-      available: 1,
-      quantity: 1,
-    },
-    {
-      id: 7,
-      title: "Macmillan Primary Social Studies - Grade 1",
-      author: "Macmillan",
-      category: "Social Studies",
-      isbn:"",
-      grade: "Grade 1",
-      available: 1,
-      quantity: 1,
-    },
-    {
-      id: 8,
-      title: "PEP Practice Tests - Ability Test",
-      author: "KC Publications",
-      category: "PEP Preparation",
-      isbn:"",
-      grade: "Grade 6",
-      available: 1,
-      quantity: 1,
-    },
-  ];
-
-  // Fetch books function - extracting it to be reusable
+  //Fetch books
   const fetchBooks = async (showLoadingState = true) => {
     try {
       if (showLoadingState) {
@@ -189,131 +105,53 @@ const Library = () => {
       } else {
         setIsSyncing(true);
       }
+  
       setSyncError(null);
-
-      // First try to load books from localStorage for consistency with admin panel
-      const savedBooks = localStorage.getItem("libraryBooks");
-      if (savedBooks) {
-        try {
-          const parsedBooks = JSON.parse(savedBooks);
-          if (Array.isArray(parsedBooks) && parsedBooks.length > 0) {
-            console.log("Using localStorage data:", parsedBooks);
-            // Add timestamp to each book if not present
-            const booksWithTimestamp = parsedBooks.map((book) => ({
-              ...book,
-              lastUpdated: book.lastUpdated || new Date().toISOString(),
-            }));
-
-            setBooks(booksWithTimestamp);
-            setLastSync(new Date());
-            setSyncError(null);
-
-            // Show success message if triggered by manual refresh
-            if (!showLoadingState) {
-              toast({
-                title: "Sync Successful",
-                description:
-                  "Library data has been refreshed from the most recent changes.",
-              });
-            }
-
-            if (showLoadingState) {
-              setIsLoading(false);
-            } else {
-              setIsSyncing(false);
-            }
-
-            return booksWithTimestamp;
-          }
-        } catch (e) {
-          console.error("Error parsing saved books:", e);
-        }
+  
+      // Fetch from API
+      const response = await fetch("http://localhost:5000/api/books");
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      // If localStorage fails, try API
-      const response = await api.get<any>("/books");
-
-      if (response.error || !response.data) {
-        throw new Error(response.error?.message || "Failed to fetch books");
+  
+      const rawData = await response.json();
+  
+      // Support for both flat array and wrapped { data: [...] }
+      const booksData = Array.isArray(rawData) ? rawData : rawData.data;
+  
+      if (!Array.isArray(booksData)) {
+        throw new Error("Invalid API response format – expected array of books");
       }
-
-      console.log("API Response:", response);
-
-      // Handle different response formats
-      let booksData: Book[] = [];
-
-      if (Array.isArray(response.data)) {
-        // Direct array response
-        booksData = response.data;
-      } else if (response.data.data && Array.isArray(response.data.data)) {
-        // Nested data object with array
-        booksData = response.data.data;
-      } else if (response.data.data && Array.isArray(response.data.data.data)) {
-        // Double nested data object
-        booksData = response.data.data.data;
-      } else {
-        console.warn(
-          "Unexpected API response format, using mock data:",
-          response.data
-        );
-        booksData = mockBooks;
-      }
-
-      if (!booksData.length) {
-        booksData = mockBooks;
-        toast({
-          title: "Using Mock Data",
-          description: "No books found in database, using sample data.",
-          variant: "default",
-        });
-      }
-
-      // Add timestamp to each book
-      const booksWithTimestamp = booksData.map((book) => ({
+  
+      // ✅ Attach `lastUpdated` to each book
+      const booksWithTimestamps = booksData.map((book) => ({
         ...book,
-        lastUpdated: book.lastUpdated || new Date().toISOString(),
+        lastUpdated: book.lastUpdated || new Date().toISOString(), // fallback to now
       }));
-
-      console.log("Processed books data:", booksWithTimestamp);
-
-      setBooks(booksWithTimestamp);
-      // Don't set filtered books here as it will reset search/filter state
-      // We'll let the useEffect for filtering handle this
+  
+      setBooks(booksWithTimestamps);
       setLastSync(new Date());
-      setSyncError(null);
-
-      // Show success message if triggered by manual refresh
+  
       if (!showLoadingState) {
         toast({
           title: "Sync Successful",
-          description: "Library data has been refreshed.",
+          description: "Library data refreshed from server",
         });
       }
-
-      return booksWithTimestamp; // Return the books data for potential use
+  
+      return booksWithTimestamps;
     } catch (error) {
-      console.error("Error fetching books:", error);
+      console.error("API Error:", error);
       setSyncError(
         error instanceof Error ? error.message : "Failed to fetch books"
       );
-
-      // Only use mock data if we don't have any books yet
-      if (books.length === 0) {
-        const mocksWithTimestamp = mockBooks.map((book) => ({
-          ...book,
-          lastUpdated: new Date().toISOString(),
-        }));
-        setBooks(mocksWithTimestamp);
-        // Don't set filtered books here
-        toast({
-          title: "Using Mock Data",
-          description: "Loading sample book collection.",
-          variant: "default",
-        });
-        return mocksWithTimestamp;
-      }
-
-      return null;
+      toast({
+        title: "Error",
+        description: "Failed to load books from server",
+        variant: "destructive",
+      });
+      return [];
     } finally {
       if (showLoadingState) {
         setIsLoading(false);
@@ -322,17 +160,12 @@ const Library = () => {
       }
     }
   };
-
+  
   // Manual sync function for refresh button
   const handleRefresh = async () => {
     if (isSyncing) return;
     await fetchBooks(false);
   };
-
-  // Initialize books with mock data and set up real-time updates
-  useEffect(() => {
-    // Initial fetch
-    fetchBooks();
 
     // Set up polling for updates every 30 seconds
     const pollInterval = setInterval(async () => {

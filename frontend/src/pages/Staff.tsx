@@ -30,213 +30,11 @@ interface Staff {
   role: string;
 }
 
-// Single source of mock data
-const mockStaffData: Staff[] = [
-  {
-    id: "1",
-    name: "Dr. Sarah Johnson",
-    position: "Principal",
-    department: "Administration",
-    email: "sarah.johnson@fps.edu",
-    phone: "(555) 123-4567",
-    image: "/images/christina-wocintechchat-com-SJvDxw0azqw-unsplash.jpg",
-    bio: "Dr. Johnson has been the principal of Frankfield Primary & Infant School for 10 years. She holds a Ph.D. in Educational Leadership and is committed to providing quality education for all students.",
-    role: "principal",
-  },
-  {
-    id: "2",
-    name: "Mr. James Wilson",
-    position: "Vice Principal",
-    department: "Administration",
-    email: "james.wilson@fps.edu",
-    phone: "(555) 123-4568",
-    image: "/images/pexels-rdne-6517333.jpg",
-    bio: "Mr. Wilson has been with the school for 8 years. He specializes in student discipline and parent communication.",
-    role: "vice-principal",
-  },
-  {
-    id: "3",
-    name: "Ms. Emily Rodriguez",
-    position: "Grade 1 Teacher",
-    department: "Teaching",
-    email: "emily.rodriguez@fps.edu",
-    phone: "(555) 123-4569",
-    image: "/images/gettyimages-1355262749-640x640.jpg",
-    bio: "Ms. Rodriguez has been teaching for 5 years. She has a passion for early childhood education and creating engaging learning environments.",
-    role: "teacher",
-  },
-  {
-    id: "4",
-    name: "Mr. David Chen",
-    position: "Grade 2 Teacher",
-    department: "Teaching",
-    email: "david.chen@fps.edu",
-    phone: "(555) 123-4570",
-    image: "/images/istockphoto-1182967311-612x612.jpg",
-    bio: "Mr. Chen has been teaching for 7 years. He specializes in mathematics education and incorporates technology into his lessons.",
-    role: "teacher",
-  },
-  {
-    id: "5",
-    name: "Ms. Lisa Thompson",
-    position: "Grade 3 Teacher",
-    department: "Teaching",
-    email: "lisa.thompson@fps.edu",
-    phone: "(555) 123-4571",
-    image: "/images/christina-wocintechchat-com-kXmKqYOGA4Y-unsplash.jpg",
-    bio: "Ms. Thompson has been teaching for 9 years. She has a background in special education and is dedicated to inclusive teaching practices.",
-    role: "teacher",
-  },
-  {
-    id: "6",
-    name: "Mr. Michael Brown",
-    position: "Physical Education Teacher",
-    department: "Specialist",
-    email: "michael.brown@fps.edu",
-    phone: "(555) 123-4572",
-    image: "/images/pexels-victor-oluwa-324310690-17402544.jpg",
-    bio: "Mr. Brown has been teaching PE for 6 years. He is a former athlete and promotes healthy living and physical activity among students.",
-    role: "teacher",
-  },
-  {
-    id: "7",
-    name: "Ms. Patricia Lee",
-    position: "Art Teacher",
-    department: "Specialist",
-    email: "patricia.lee@fps.edu",
-    phone: "(555) 123-4573",
-    image: "/images/pexels-pavel-danilyuk-8423887.jpg",
-    bio: "Ms. Lee has been teaching art for 8 years. She has a background in fine arts and encourages creative expression in her students.",
-    role: "teacher",
-  },
-  {
-    id: "8",
-    name: "Mr. Robert Garcia",
-    position: "Librarian",
-    department: "Support",
-    email: "robert.garcia@fps.edu",
-    phone: "(555) 123-4574",
-    image: "/images/willian-souza-p5BoBF0XJUA-unsplash.jpg",
-    bio: "Mr. Garcia has been the school librarian for 5 years. He has a Master's in Library Science and is passionate about promoting literacy.",
-    role: "librarian",
-  },
-  {
-    id: "9",
-    name: "Ms. Jennifer White",
-    position: "School Nurse",
-    department: "Support",
-    email: "jennifer.white@fps.edu",
-    phone: "(555) 123-4575",
-    image: "/images/pexels-picha-stock-2210122-3894379.jpg",
-    bio: "Ms. White has been the school nurse for 7 years. She has a background in pediatric nursing and ensures the health and safety of all students.",
-    role: "school-nurse",
-  },
-  {
-    id: "10",
-    name: "Mr. Thomas Anderson",
-    position: "IT Specialist",
-    department: "Support",
-    email: "thomas.anderson@fps.edu",
-    phone: "(555) 123-4576",
-    image: "/images/pexels-kampus-7983621.jpg",
-    bio: "Mr. Anderson has been the IT specialist for 4 years. He manages the school's technology infrastructure and provides technical support.",
-    role: "it-specialist",
-  },
-  {
-    id: "11",
-    name: "Ms. Maria Santos",
-    position: "Grade 4 Teacher",
-    department: "Teaching",
-    email: "maria.santos@fps.edu",
-    phone: "(555) 123-4577",
-    image: "/images/ai-generated-a-woman-in-glasses-is-smiling-at-the-camera-in-a-classroom-free-photo.jpg",
-    bio: "Ms. Santos has been teaching for 6 years. She specializes in language arts and creates an inclusive classroom environment.",
-    role: "teacher",
-  },
-  {
-    id: "12",
-    name: "Mr. John Parker",
-    position: "Grade 5 Teacher",
-    department: "Teaching",
-    email: "john.parker@fps.edu",
-    phone: "(555) 123-4578",
-    image: "/images/zach-wear-0XVJ5iMtRrQ-unsplash.jpg",
-    bio: "Mr. Parker has been teaching for 10 years. He focuses on project-based learning and STEM education.",
-    role: "teacher",
-  },
-  {
-    id: "13",
-    name: "Ms. Rachel Green",
-    position: "Grade 6 Teacher",
-    department: "Teaching",
-    email: "rachel.green@fps.edu",
-    phone: "(555) 123-4579",
-    image: "/images/pexels-divinetechygirl-1181519.jpg",
-    bio: "Ms. Green has been teaching for 8 years. She excels in preparing students for their transition to secondary education.",
-    role: "teacher",
-  },
-  {
-    id: "14",
-    name: "Mr. Kevin Williams",
-    position: "Music Teacher",
-    department: "Specialist",
-    email: "kevin.williams@fps.edu",
-    phone: "(555) 123-4580",
-    image: "/images/max-mota-0OX2tt9bINQ-unsplash.jpg",
-    bio: "Mr. Williams has been teaching music for 12 years. He leads the school band and choir programs.",
-    role: "teacher",
-  },
-  {
-    id: "15",
-    name: "Ms. Sarah Martinez",
-    position: "ESL Teacher",
-    department: "Specialist",
-    email: "sarah.martinez@fps.edu",
-    phone: "(555) 123-4581",
-    image: "/images/360_F_287784454_zmT0W1L5ijfpMiJKxU9NHgRNW4fFTp8J.jpg",
-    bio: "Ms. Martinez has been teaching ESL for 7 years. She helps students develop strong English language skills while celebrating their cultural diversity.",
-    role: "teacher",
-  },
-  {
-    id: "16",
-    name: "Dr. Michael Chang",
-    position: "Special Education Teacher",
-    department: "Teaching",
-    email: "michael.chang@fps.edu",
-    phone: "(555) 123-4582",
-    image: "/images/jonas-kakaroto-KIPqvvTOC1s-unsplash.jpg",
-    bio: "Dr. Chang has been in special education for 15 years. He develops individualized learning plans and provides support for students with diverse needs.",
-    role: "teacher",
-  },
-  {
-    id: "17",
-    name: "Ms. Amanda Foster",
-    position: "Guidance Counselor",
-    department: "Support",
-    email: "amanda.foster@fps.edu",
-    phone: "(555) 123-4583",
-    image: "/images/pexels-adara-cox-2148751755-30258585.jpg",
-    bio: "Ms. Foster has been a guidance counselor for 9 years. She provides academic and emotional support to students and their families.",
-    role: "counselor",
-  },
-  {
-    id: "18",
-    name: "Mr. Christopher Lee",
-    position: "Science Teacher",
-    department: "Teaching",
-    email: "christopher.lee@fps.edu",
-    phone: "(555) 123-4584",
-    image: "/images/pexels-rdne-7092613.jpg",
-    bio: "Mr. Lee has been teaching science for 8 years. He makes science fun and engaging through hands-on experiments and real-world applications.",
-    role: "teacher",
-  },
-];
-
 const Staff = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("All");
   const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
-  const [staff, setStaff] = useState<Staff[]>(mockStaffData);
+  const [staff, setStaff] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -245,102 +43,52 @@ const Staff = () => {
     const fetchStaff = async () => {
       try {
         setLoading(true);
-
-        // Check if we're using demo mode
-        const token = localStorage.getItem("eduzone-token");
-        const isUsingDemoMode = token && token.startsWith("demo_");
-
-        // If using demo mode, use mock data directly
-        if (isUsingDemoMode) {
-          console.log("Using demo mode for staff data");
-          setStaff(mockStaffData);
-          toast({
-            title: "Demo Mode",
-            description: "Using sample staff information",
-            variant: "default",
-          });
-          setLoading(false);
-          return;
+        
+        // Fetch from your API endpoint
+        const response = await fetch("http://localhost:5000/api/staff");
+        
+        if (!response.ok) {
+          throw new Error("Failed to fetch staff data");
         }
-
-        // Otherwise try to fetch from API
-        const response = await api.get<any>("/staff");
-
-        // Check if we have a valid response with data
-        if (response.error) {
-          throw new Error(
-            response.error.message || "Failed to fetch staff data"
-          );
-        }
-
+        
+        const data = await response.json();
+        
         // Handle different response formats from the backend
         let staffData = [];
-
-        // The backend might return data in different formats:
-        // 1. { data: Staff[] } - direct array of staff members
-        // 2. { data: { data: Staff[] } } - nested data object
-        // 3. { data: mockData.staff } - mock data structure
-
-        if (response.data) {
-          if (Array.isArray(response.data)) {
-            staffData = response.data;
-          } else if (response.data.data && Array.isArray(response.data.data)) {
-            staffData = response.data.data;
-          } else if (
-            response.data.data &&
-            response.data.data.data &&
-            Array.isArray(response.data.data.data)
-          ) {
-            staffData = response.data.data.data;
-          }
-        }
-
-        // If we have API data, transform and use it
-        if (staffData.length > 0) {
-          const transformedStaff = staffData.map((member: any) => ({
-            id: member.id.toString(),
-            name: member.name,
-            position:
-              member.position ||
-              (member.role === "teacher"
-                ? "Teacher"
-                : member.role.charAt(0).toUpperCase() + member.role.slice(1)),
-            department:
-              member.department ||
-              (member.role === "teacher" ? "Teaching" : "Administration"),
-            email: member.email,
-            phone: member.phone || "N/A",
-            image: member.image || "/images/school-logo.png",
-            bio:
-              member.bio ||
-              `${member.name} is a dedicated member of our staff.`,
-            role: member.role,
-          }));
-          setStaff(transformedStaff);
-          toast({
-            title: "Staff Loaded",
-            description: "Successfully loaded staff data",
-            variant: "default",
-          });
+        
+        if (data.data && Array.isArray(data.data)) {
+          staffData = data.data;
+        } else if (Array.isArray(data)) {
+          staffData = data;
         } else {
-          // No valid data received, use mock data
-          console.log("No staff data received from API, using mock data");
-          setStaff(mockStaffData);
-          toast({
-            title: "Using Demo Data",
-            description: "Displaying sample staff information",
-            variant: "default",
-          });
+          throw new Error("Invalid staff data format");
         }
+        
+        // Transform the data to match the Staff interface
+        const transformedStaff = staffData.map((member: any) => ({
+          id: member.id.toString(),
+          name: member.name || `${member.first_name} ${member.last_name}`,
+          position: member.position || "Staff Member",
+          department: member.department || "Teaching",
+          email: member.email || "N/A",
+          phone: member.phone || "N/A",
+          image: member.image || "/images/school-logo.png",
+          bio: member.bio || `${member.name} is a dedicated member of our staff.`,
+          role: member.role || "staff",
+        }));
+        
+        setStaff(transformedStaff);
+        toast({
+          title: "Success",
+          description: "Staff data loaded successfully",
+          variant: "default",
+        });
       } catch (error) {
         console.error("Error fetching staff:", error);
-        // Fall back to mock data on error
-        console.log("Error fetching staff data, using mock data instead");
-        setStaff(mockStaffData);
         toast({
-          title: "Using Demo Data",
-          description: "Displaying sample staff information",
-          variant: "default",
+          title: "Error",
+          description: "Failed to load staff data",
+          variant: "destructive",
         });
       } finally {
         setLoading(false);
@@ -359,6 +107,7 @@ const Staff = () => {
       selectedDepartment === "All" || staff.department === selectedDepartment;
     return matchesSearch && matchesDepartment;
   });
+
 
   if (loading) {
     return (
