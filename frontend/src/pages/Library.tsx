@@ -13,6 +13,7 @@ interface Book {
   id: number;
   title: string;
   author: string;
+  isbn: string;
   category: string;
   grade: string;
   available: number;
@@ -68,6 +69,7 @@ const Library = () => {
     title: "",
     author: "",
     category: "Language Arts",
+    isbn:"",
     grade: "Grade 1",
     available: 1,
     quantity: 1,
@@ -102,6 +104,7 @@ const Library = () => {
       title: "New Integrated Approach Language Arts - Grade 1",
       author: "Carlong Publishers",
       category: "Language Arts",
+      isbn:"",
       grade: "Grade 1",
       available: 1,
       quantity: 1,
@@ -111,6 +114,7 @@ const Library = () => {
       title: "New Integrated Approach Language Arts - Grade 2",
       author: "Carlong Publishers",
       category: "Language Arts",
+      isbn:"",
       grade: "Grade 2",
       available: 1,
       quantity: 1,
@@ -120,6 +124,7 @@ const Library = () => {
       title: "Caribbean Primary Mathematics - Book 1",
       author: "Oxford",
       category: "Mathematics",
+      isbn:"",
       grade: "Grade 1",
       available: 1,
       quantity: 1,
@@ -129,6 +134,7 @@ const Library = () => {
       title: "Caribbean Primary Mathematics - Book 2",
       author: "Oxford",
       category: "Mathematics",
+      isbn:"",
       grade: "Grade 2",
       available: 0,
       quantity: 1,
@@ -138,6 +144,7 @@ const Library = () => {
       title: "Caribbean Primary Science - Book 1",
       author: "Heinemann",
       category: "Science",
+      isbn:"",
       grade: "Grade 1",
       available: 1,
       quantity: 1,
@@ -147,6 +154,7 @@ const Library = () => {
       title: "Caribbean Primary Science - Book 2",
       author: "Heinemann",
       category: "Science",
+      isbn:"",
       grade: "Grade 2",
       available: 1,
       quantity: 1,
@@ -156,6 +164,7 @@ const Library = () => {
       title: "Macmillan Primary Social Studies - Grade 1",
       author: "Macmillan",
       category: "Social Studies",
+      isbn:"",
       grade: "Grade 1",
       available: 1,
       quantity: 1,
@@ -165,6 +174,7 @@ const Library = () => {
       title: "PEP Practice Tests - Ability Test",
       author: "KC Publications",
       category: "PEP Preparation",
+      isbn:"",
       grade: "Grade 6",
       available: 1,
       quantity: 1,
@@ -705,6 +715,7 @@ const Library = () => {
         title: "",
         author: "",
         category: "Language Arts",
+        isbn:"",
         grade: "Grade 1",
         available: 1,
         quantity: 1,

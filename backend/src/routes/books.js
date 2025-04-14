@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
 
 // Create book
 router.post("/", async (req, res) => {
-  const { title, author, isbn, category, quantity } = req.body;
+  const { title, author, isbn, category,grade, quantity,avaliable } = req.body;
   
   // Validate that isbn is provided
   if (!isbn || isbn.trim() === "") {
@@ -24,8 +24,8 @@ router.post("/", async (req, res) => {
 
   try {
     const [result] = await pool.query(
-      "INSERT INTO books (title, author, isbn, category, quantity, available) VALUES (?, ?, ?, ?, ?, ?)",
-      [title, author, isbn, category, quantity, quantity]
+      "INSERT INTO books (title, author, isbn, category, grade, quantity, available) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      [title, author, isbn, category,grade, quantity, avaliable]
     );
     const [newBook] = await pool.query("SELECT * FROM books WHERE id = ?", [
       result.insertId,
@@ -40,11 +40,11 @@ router.post("/", async (req, res) => {
 // Update book
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { title, author, isbn, category, quantity, available } = req.body;
+  const { title, author, isbn, category, grade, quantity, available } = req.body;
   try {
     await pool.query(
-      "UPDATE books SET title = ?, author = ?, isbn = ?, category = ?, quantity = ?, available = ? WHERE id = ?",
-      [title, author, isbn, category, quantity, available, id]
+      "UPDATE books SET title = ?, author = ?, isbn = ?, grade = ?, category = ?, quantity = ?, available = ? WHERE id = ?",
+      [title, author, isbn, category, grade, quantity, available, id]
     );
     const [updatedBook] = await pool.query("SELECT * FROM books WHERE id = ?", [
       id,
