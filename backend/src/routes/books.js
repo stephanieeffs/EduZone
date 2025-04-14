@@ -118,14 +118,17 @@ router.delete("/:id", async (req, res) => {
 });
 
 // Checkout book
+// Checkout book
 router.post("/:id/checkout", async (req, res) => {
   const { id } = req.params;
   try {
-    // First check if the book exists and is available
+    // Check if the book exists
     const [book] = await pool.query("SELECT * FROM books WHERE id = ?", [id]);
     if (!book[0]) {
       return res.status(404).json({ error: { message: "Book not found" } });
     }
+
+    // Check if the book is available
     if (book[0].available <= 0) {
       return res
         .status(400)
@@ -142,11 +145,13 @@ router.post("/:id/checkout", async (req, res) => {
     const [updatedBook] = await pool.query("SELECT * FROM books WHERE id = ?", [
       id,
     ]);
-    res.json({ data: updatedBook[0] });
+    res.json({ data: updatedBook[0] }); // Respond with updated book
   } catch (error) {
+    console.error("Error checking out book:", error);
     res.status(500).json({ error: { message: "Error checking out book" } });
   }
 });
+
 
 // Return book
 router.post("/:id/return", async (req, res) => {
