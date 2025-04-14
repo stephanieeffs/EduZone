@@ -12,61 +12,10 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Get book by ID
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
-  try {
-    const [book] = await pool.query("SELECT * FROM books WHERE id = ?", [id]);
-
-    if (book.length === 0) {
-      return res.status(404).json({ error: { message: "Book not found" } });
-    }
-    res.json({ data: book[0] });
-  } catch (error) {
-    console.error("Error fetching book:", error);
-    res.status(500).json({ error: { message: "Error fetching book" } });
-  }
-});
-
-router.get("/grade/:grade", async (req, res) => {
-  const { grade } = req.params;
-  try {
-    const [books] = await pool.query("SELECT * FROM books WHERE grade = ?", [grade]);
-
-    if (books.length === 0) {
-      return res.status(404).json({ error: { message: "No books found for the specified grade" } });
-    }
-
-    // Return all books for the specified grade
-    res.json({ data: books });
-  } catch (error) {
-    console.error("Error fetching books:", error);
-    res.status(500).json({ error: { message: "Error fetching books" } });
-  }
-});
-
-router.get("/title/:title", async (req, res) => {
-  const { title } = req.params;  
-  try {
-    const [books] = await pool.query("SELECT * FROM books WHERE title = ?", [title]);
-
-    if (books.length === 0) {
-      return res.status(404).json({ error: { message: "No books found with the specified title" } });
-    }
-
-    
-    res.json({ data: books });
-  } catch (error) {
-    console.error("Error fetching books:", error);
-    res.status(500).json({ error: { message: "Error fetching books" } });
-  }
-});
-
-
 
 // Create book
 router.post("/", async (req, res) => {
-  const { title, author, isbn, category, quantity } = req.body;
+  const { title, author, isbn, category,grade, quantity,avaliable } = req.body;
   
   // Validate that isbn is provided
   if (!isbn || isbn.trim() === "") {
@@ -75,8 +24,8 @@ router.post("/", async (req, res) => {
 
   try {
     const [result] = await pool.query(
-      "INSERT INTO books (title, author, category, quantity, available, grade ) VALUES (?, ?, ?, ?, ?, ?, )",
-      [title, author, category, quantity, quantity]
+      "INSERT INTO books (title, author, isbn, category, grade, quantity, available) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      [title, author, isbn, category,grade, quantity, avaliable]
     );
     const [newBook] = await pool.query("SELECT * FROM books WHERE id = ?", [
       result.insertId,
@@ -91,11 +40,11 @@ router.post("/", async (req, res) => {
 // Update book
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { title, author, category, quantity, available } = req.body;
+  const { title, author, isbn, category, grade, quantity, available } = req.body;
   try {
     await pool.query(
-      "UPDATE books SET title = ?, author = ?, category = ?, quantity = ?, available = ?, grade = ?, WHERE id = ?",
-      [title, author, isbn, category, quantity, available, id]
+      "UPDATE books SET title = ?, author = ?, isbn = ?, grade = ?, category = ?, quantity = ?, available = ? WHERE id = ?",
+      [title, author, isbn, category, grade, quantity, available, id]
     );
     const [updatedBook] = await pool.query("SELECT * FROM books WHERE id = ?", [
       id,
