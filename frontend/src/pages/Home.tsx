@@ -177,7 +177,7 @@ const Home = () => {
               transition={{ duration: 0.7, delay: 0.6 }}
             >
               <ImageWithFallback
-                src="/images/school-building.png"
+                src="/images/school-buildings.jpg"
                 alt="School Building"
                 className="w-full h-full object-cover"
               />
