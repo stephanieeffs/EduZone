@@ -29,6 +29,8 @@ CREATE TABLE `books` (
   `isbn` varchar(50) NOT NULL,
   `category` varchar(50) NOT NULL,
   `grade` varchar(20) DEFAULT NULL,
+  `isbn` varchar(13) NOT NULL,
+  `category` varchar(50) NOT NULL,
   `quantity` int NOT NULL DEFAULT '0',
   `available` int NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,

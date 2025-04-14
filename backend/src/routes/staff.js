@@ -3,35 +3,40 @@ const router = express.Router();
 const pool = require("../config/database");
 
 // Get all staff members
+// Get all staff members
 router.get("/", async (req, res) => {
+  const { role } = req.query;  
   try {
-    // First try to get staff from users table with role 'teacher'
-    const [rows] = await pool.query(
-      "SELECT id, name, email, role, created_at FROM users WHERE role = 'teacher'"
-    );
+    let query = "SELECT id, name, position, department, email, phone, imagefilepath, bio, role, created_at FROM staff";  // Updated SELECT query
+    let queryParams = [];
+
+    if (role) {
+      query += " WHERE role IN ('admin', 'teacher', 'librarian')";
+    }
+
+    const [rows] = await pool.query(query, queryParams);
 
     if (rows.length === 0) {
       return res.json({
         data: [],
-        message: "No staff members found in the database, using mock data",
+        message: "No staff members found in the database.",
       });
     }
 
     res.json({ data: rows });
   } catch (error) {
     console.error("Error fetching staff:", error);
-    res
-      .status(500)
-      .json({ error: { message: "Error fetching staff members" } });
+    res.status(500).json({ error: { message: "Error fetching staff members" } });
   }
 });
+
 
 // Get staff member by ID
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const [rows] = await pool.query(
-      "SELECT id, name, email, role, created_at FROM users WHERE id = ? AND role = 'teacher'",
+      "SELECT id, name, email, role, created_at FROM staff WHERE id = ? AND role IN ('admin', 'staff', 'librarian')",
       [id]
     );
 
@@ -49,11 +54,15 @@ router.get("/:id", async (req, res) => {
 
 // Create staff member
 router.post("/", async (req, res) => {
-  const { name, email, password, subject } = req.body;
+  const { name, email, phone, role, position, department, imagefilepath, bio } = req.body;
+
+  if (!role || !['admin', 'staff', 'librarian'].includes(role)) {
+    return res.status(400).json({ error: { message: "Invalid role. Role must be 'admin', 'staff', or 'librarian'." } });
+  }
+
   try {
-    // Check if user already exists
     const [existingUsers] = await pool.query(
-      "SELECT * FROM users WHERE email = ?",
+      "SELECT * FROM staff WHERE email = ?",
       [email]
     );
 
@@ -63,15 +72,13 @@ router.post("/", async (req, res) => {
         .json({ error: { message: "Email already in use" } });
     }
 
-    // Create user with teacher role
     const [result] = await pool.query(
-      "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, 'teacher')",
-      [name, email, password]
+      "INSERT INTO staff (name, email, phone, role, position, department, imagefilepath, bio) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      [name, email, phone, role, position, department, imagefilepath, bio]
     );
 
-    // Get the created user
     const [newStaff] = await pool.query(
-      "SELECT id, name, email, role, created_at FROM users WHERE id = ?",
+      "SELECT id, name, email, role, created_at FROM staff WHERE id = ?",
       [result.insertId]
     );
 
@@ -85,11 +92,15 @@ router.post("/", async (req, res) => {
 // Update staff member
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { name, email } = req.body;
+  const { name, email, phone, role, position, department, imagefilepath, bio } = req.body;
+
+  if (role && !['admin', 'staff', 'librarian'].includes(role)) {
+    return res.status(400).json({ error: { message: "Invalid role. Role must be 'admin', 'staff', or 'librarian'." } });
+  }
+
   try {
-    // Check if staff member exists
     const [existingStaff] = await pool.query(
-      "SELECT * FROM users WHERE id = ? AND role = 'teacher'",
+      "SELECT * FROM staff WHERE id = ? AND role IN ('admin', 'staff', 'librarian')",
       [id]
     );
 
@@ -99,16 +110,12 @@ router.put("/:id", async (req, res) => {
         .json({ error: { message: "Staff member not found" } });
     }
 
-    // Update user
-    await pool.query("UPDATE users SET name = ?, email = ? WHERE id = ?", [
-      name,
-      email,
-      id,
+    await pool.query("UPDATE staff SET name = ?, email = ?, phone = ?, role = ?, position = ?, department = ?, imagefilepath = ?, bio = ? WHERE id = ?", [
+      name, email, phone, role || existingStaff[0].role, position, department, imagefilepath, bio, id
     ]);
 
-    // Get updated user
     const [updatedStaff] = await pool.query(
-      "SELECT id, name, email, role, created_at FROM users WHERE id = ?",
+      "SELECT id, name, email, role, created_at FROM staff WHERE id = ?",
       [id]
     );
 
@@ -122,9 +129,8 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    // Check if staff member exists
     const [existingStaff] = await pool.query(
-      "SELECT * FROM users WHERE id = ? AND role = 'teacher'",
+      "SELECT * FROM staff WHERE id = ? AND role IN ('admin', 'staff', 'librarian')",
       [id]
     );
 
@@ -134,8 +140,7 @@ router.delete("/:id", async (req, res) => {
         .json({ error: { message: "Staff member not found" } });
     }
 
-    // Delete user
-    await pool.query("DELETE FROM users WHERE id = ?", [id]);
+    await pool.query("DELETE FROM staff WHERE id = ?", [id]);
 
     res.json({ data: { success: true } });
   } catch (error) {
